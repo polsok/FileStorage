@@ -13,7 +13,7 @@
 3. LogError.log   Лог для записи ошибок
 4. LogErrorExstension.log   Лог для записи критических ошибок
 # Пример заполнения файла config.ini
-```
+```yaml
 #1 Получение списка пользователей домена
 # путь в каталог LDAP где ищем пользователей
 SearchUsersIn=LDAP://OU=HEAD,OU=Users,OU=MyFirma,DC=office,DC=local
