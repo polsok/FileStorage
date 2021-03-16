@@ -12,19 +12,23 @@ namespace AD
         /// Главный лог (ведутся записи запуска приложений и очистки логов)
         /// </summary>
         LogMain,
+
         /// <summary>
         /// Лог для записи сообщений
         /// </summary>
         LogJob,
+
         /// <summary>
         /// лог ошибок
         /// </summary>
         LogError,
+
         /// <summary>
         /// лог ошибок расширенный
         /// </summary>
         LogErrorExpanded
     }
+
     /// <summary>
     /// Работа с логами
     /// </summary>
@@ -33,24 +37,29 @@ namespace AD
         /// <summary>
         /// путь к папке логов
         /// </summary>
-        public static string PathToLog = Environment.CurrentDirectory + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "_log";
+        public static string PathToLog = Environment.CurrentDirectory + "\\" +
+                                         System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "_log";
 
         /// <summary>
         /// лог ошибок
         /// </summary>
         public static string LogError = PathToLog + "\\LogError.log";
+
         /// <summary>
         /// лог ошибок расширенный
         /// </summary>
         public static string LogErrorExpanded = PathToLog + "\\LogErrorExpanded.log";
+
         /// <summary>
         /// Главный лог (ведутся записи запуска приложений и очистки логов)
         /// </summary>
         public static string LogMain = PathToLog + "\\LogMain.log";
+
         /// <summary>
         /// Лог для записи сообщений
         /// </summary>
         public static string LogJob = PathToLog + "\\LogJob.log";
+
         /// <summary>
         /// максимальный размер логов (кроме LogMain) по умолчанию 10 мб
         /// </summary>
@@ -102,6 +111,7 @@ namespace AD
                         {
                             File.AppendAllText(Log.LogMain, "Date\t\t\t\t\t\tMashine\tUsername\t\tMessage\n");
                         }
+
                         File.AppendAllText(Log.LogMain,
                             DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName +
                             "\t" + Message + "\n");
@@ -128,6 +138,7 @@ namespace AD
             {
                 Directory.CreateDirectory(PathToLog);
             }
+
             FileInfo file = new FileInfo(Log.LogError);
             if (file.Exists && file.Length > MaxLength)
             {
@@ -136,11 +147,15 @@ namespace AD
                     Environment.UserName + "\tClear LogError\n");
                 file.Delete();
             }
+
             if (!file.Exists)
             {
                 File.AppendAllText(Log.LogError, "Date\t\t\t\t\t\tMashine\tUsername\t\tMessage\n");
             }
-            File.AppendAllText(Log.LogError, DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName + "\t" + Message + "\n");
+
+            File.AppendAllText(Log.LogError,
+                DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName + "\t" +
+                Message + "\n");
             Console.WriteLine(Message);
         }
 
@@ -154,6 +169,7 @@ namespace AD
             {
                 Directory.CreateDirectory(PathToLog);
             }
+
             FileInfo file = new FileInfo(Log.LogError);
             if (file.Exists && file.Length > MaxLength)
             {
@@ -162,10 +178,12 @@ namespace AD
                     Environment.UserName + "\tClear LogErrorExpanded\n");
                 file.Delete();
             }
+
             if (!file.Exists)
             {
                 File.AppendAllText(Log.LogErrorExpanded, "Date\t\t\t\t\t\tMashine\tUsername\t\tNessage\n");
             }
+
             File.AppendAllText(Log.LogErrorExpanded,
                 DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName + "\t" +
                 e.Message + "\t" + e.StackTrace + "\n");
