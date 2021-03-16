@@ -3,7 +3,7 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
-
+!*.exe
 # Other files and folders
 .settings/
 
