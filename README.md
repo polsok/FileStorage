@@ -50,3 +50,5 @@ LinkSDirectory=Links
 Run=Notepad.exe
 Run=ADExplorer.exe
 ```
+
+При запуске приложения через планировщик заданий нужно указывать рабочую папку с приложением.
