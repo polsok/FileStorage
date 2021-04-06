@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace AD
 {
@@ -76,6 +77,7 @@ namespace AD
         {
             try
             {
+                string MessageToLog = Environment.MachineName + "\t" + Environment.UserName + "\t" + Message;
                 //проверяем что папка с логами существует
                 if (!Directory.Exists(PathToLog))
                 {
@@ -94,27 +96,33 @@ namespace AD
                                 Environment.UserName + "\tClear LogJob\n");
                             file.Delete();
                         }
-
+                        using (EventLog eventLog = new EventLog("Application"))
+                        {
+                            eventLog.Source = "Application";
+                            eventLog.WriteEntry(MessageToLog, EventLogEntryType.Information, 901, 1);
+                        }
                         if (!file.Exists)
                         {
                             File.AppendAllText(Log.LogJob, "Date\t\t\t\t\t\tMashine\tUsername\t\tMessage\n");
                         }
-
-                        File.AppendAllText(Log.LogJob,
-                            DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName +
-                            "\t" + Message + "\n");
+                        
+                        File.AppendAllText(Log.LogJob, DateTime.Now.ToString("U") + MessageToLog + "\n");
                         Console.WriteLine(Message);
                         break;
+
                     case Logs.LogMain:
                         file = new FileInfo(Log.LogMain);
+                        using (EventLog eventLog = new EventLog("Application"))
+                        {
+                            eventLog.Source = "Application";
+                            eventLog.WriteEntry(MessageToLog, EventLogEntryType.Information, 900, 1);
+                        }
                         if (!file.Exists)
                         {
                             File.AppendAllText(Log.LogMain, "Date\t\t\t\t\t\tMashine\tUsername\t\tMessage\n");
                         }
 
-                        File.AppendAllText(Log.LogMain,
-                            DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName +
-                            "\t" + Message + "\n");
+                        File.AppendAllText(Log.LogMain, DateTime.Now.ToString("U") + MessageToLog + "\n");
                         Console.WriteLine(Message);
                         break;
                 }
@@ -133,6 +141,12 @@ namespace AD
         /// </summary>
         public static void Exception(string Message)
         {
+            string MessageToLog = Environment.MachineName + "\t" + Environment.UserName + "\t" + Message;
+            using (EventLog eventLog = new EventLog("Application"))
+            {
+                eventLog.Source = "Application";
+                eventLog.WriteEntry(MessageToLog, EventLogEntryType.Warning, 902, 1);
+            }
             //проверяем что папка с логами существует
             if (!Directory.Exists(PathToLog))
             {
@@ -154,8 +168,7 @@ namespace AD
             }
 
             File.AppendAllText(Log.LogError,
-                DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName + "\t" +
-                Message + "\n");
+                DateTime.Now.ToString("U") + "\t" + MessageToLog + "\n");
             Console.WriteLine(Message);
         }
 
@@ -164,6 +177,12 @@ namespace AD
         /// </summary>
         public static void Exception(Exception e)
         {
+            string MessageToLog = Environment.MachineName + "\t" + Environment.UserName + "\t" + e.Message + "\t" + e.StackTrace;
+            using (EventLog eventLog = new EventLog("Application"))
+            {
+                eventLog.Source = "Application";
+                eventLog.WriteEntry(MessageToLog, EventLogEntryType.Error, 903, 1);
+            }
             //проверяем что папка с логами существует
             if (!Directory.Exists(PathToLog))
             {
@@ -185,8 +204,7 @@ namespace AD
             }
 
             File.AppendAllText(Log.LogErrorExpanded,
-                DateTime.Now.ToString("U") + "\t" + Environment.MachineName + "\t" + Environment.UserName + "\t" +
-                e.Message + "\t" + e.StackTrace + "\n");
+                DateTime.Now.ToString("U") + MessageToLog + "\n");
             Console.WriteLine("Приложение вызвало ошибку и будет закрыто");
             Console.WriteLine(e.Message);
             Console.WriteLine("Подробнее смотрите в LogErrorExpanded.log");
