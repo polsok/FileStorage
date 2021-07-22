@@ -34,6 +34,9 @@ namespace AD
                 //загрузка получившегося массива в словарь
                 foreach (var V in Data)
                 {
+                    //пропускаем пустые строки
+                    if(V.Length == 0)
+                        continue;
                     //пропускаем примечания
                     if(V.Substring(0,1)=="#")
                         continue;
