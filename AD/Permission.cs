@@ -46,7 +46,42 @@ namespace AD
                 return false;
             }
         }
-
+        /// <summary>
+        /// установка наследуемых прав на запись
+        /// </summary>
+        internal static bool Add_RW_Inheritage(string path, string name)
+        {
+            try
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                DirectorySecurity U_M = dirInfo.GetAccessControl(AccessControlSections.Access);
+                //Только для папок
+                U_M.AddAccessRule(new FileSystemAccessRule(name,
+                    FileSystemRights.Write,
+                    InheritanceFlags.ContainerInherit,
+                    PropagationFlags.InheritOnly,
+                    AccessControlType.Allow));
+                //Только для файлов
+                U_M.AddAccessRule(new FileSystemAccessRule(name,
+                    FileSystemRights.Write,
+                    InheritanceFlags.ObjectInherit,
+                    PropagationFlags.InheritOnly,
+                    AccessControlType.Allow));
+                //Только для этой папки
+                U_M.AddAccessRule(new FileSystemAccessRule(name,
+                    FileSystemRights.Write,
+                    InheritanceFlags.None,
+                    PropagationFlags.InheritOnly,
+                    AccessControlType.Allow));
+                dirInfo.SetAccessControl(U_M);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e.Message);
+                return false;
+            }
+        }
         /// <summary>
         /// установка наследуемых прав на чтение
         /// </summary>

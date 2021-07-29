@@ -84,6 +84,7 @@ namespace AD
                     DirectorySearcher search = new DirectorySearcher(searchRoot);
                     search.Filter = "(&(objectClass=user)(objectCategory=person))";
                     search.PropertiesToLoad.Add("samaccountname");
+                    search.PageSize = 10000;
                     resultCol = search.FindAll();
                     if (resultCol != null)
                     {
@@ -93,6 +94,7 @@ namespace AD
                             if (result.Properties.Contains("samaccountname"))
                             {
                                 string UserName = (String) result.Properties["samaccountname"][0];
+
                                 UsersList.Add(UserName);
                             }
                         }
@@ -183,6 +185,43 @@ namespace AD
             }
         }
 
+        private static List<string> allUserList = new List<string>();
+        /// <summary>
+        /// Рекурсивное получение списка пользователей домена
+        /// </summary>
+        private static void GetListUserRecurs()
+        {
+            try
+            {
+
+                foreach (var VALUE in Config.GetValue("SearchUsersIn"))
+                {
+                    DirectoryEntry searchRoot = new DirectoryEntry(VALUE);
+                    DirectorySearcher search = new DirectorySearcher(searchRoot);
+                    search.Filter = "(&(objectClass=user)(objectCategory=person))";
+                    search.PropertiesToLoad.Add("samaccountname");
+                    resultCol = search.FindAll();
+                    if (resultCol != null)
+                    {
+                        for (int counter = 0; counter < resultCol.Count; counter++)
+                        {
+                            result = resultCol[counter];
+                            if (result.Properties.Contains("samaccountname"))
+                            {
+                                string UserName = (String)result.Properties["samaccountname"][0];
+
+                                allUserList.Add(UserName);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e.Message);
+            }
+        }
+
         #endregion
 
         #region Создание структуры файлов и папок пользователей
@@ -201,10 +240,12 @@ namespace AD
             //загружаем файл в массив  Users
             string[] Users = File.ReadAllLines(Config.GetValue("UsersList")[0]);
             string TemplateDirectory = Config.GetValue("PathTemplateDirectory")[0];
+            int count = 0;
             //если каталога нет создаем его и копируем туда структуру и файлы из шаблона
             foreach (var user in Users)
             {
-                Log.AddLog(Logs.LogJob, "Создаем каталог пользователю "+ user);
+                Log.AddLog(Logs.LogJob, "Создаем каталог пользователю "+ count +" "+ user);
+                count++;
                 // метка о существовании директории до запуска приложения
                 bool ExistDirectory = true;
                 try
@@ -236,9 +277,13 @@ namespace AD
                             {
                                 t[1] = user;
                             }
-                            if (t[2] == "RW")
+                            if (t[2] == "FC")
                             {
                                 Permission.Add_FC_Inheritage(UserDirectory + t[0], t[1]);
+                            }
+                            if (t[2] == "RW")
+                            {
+                                Permission.Add_RW_Inheritage(UserDirectory + t[0], t[1]);
                             }
                             if (t[2] == "RO")
                             {
@@ -288,9 +333,13 @@ namespace AD
                             {
                                 t[1] = user;
                             }
-                            if (t[2] == "RW")
+                            if (t[2] == "FC")
                             {
                                 Permission.Add_FC_Inheritage(UserDirectory + t[0], t[1]);
+                            }
+                            if (t[2] == "RW")
+                            {
+                                Permission.Add_RW_Inheritage(UserDirectory + t[0], t[1]);
                             }
                             if (t[2] == "RO")
                             {
