@@ -57,19 +57,19 @@ namespace AD
                 DirectorySecurity U_M = dirInfo.GetAccessControl(AccessControlSections.Access);
                 //Только для папок
                 U_M.AddAccessRule(new FileSystemAccessRule(name,
-                    FileSystemRights.Write,
+                    FileSystemRights.Modify,
                     InheritanceFlags.ContainerInherit,
                     PropagationFlags.InheritOnly,
                     AccessControlType.Allow));
                 //Только для файлов
                 U_M.AddAccessRule(new FileSystemAccessRule(name,
-                    FileSystemRights.Write,
+                    FileSystemRights.Modify,
                     InheritanceFlags.ObjectInherit,
                     PropagationFlags.InheritOnly,
                     AccessControlType.Allow));
                 //Только для этой папки
                 U_M.AddAccessRule(new FileSystemAccessRule(name,
-                    FileSystemRights.Write,
+                    FileSystemRights.Modify,
                     InheritanceFlags.None,
                     PropagationFlags.InheritOnly,
                     AccessControlType.Allow));

@@ -6,7 +6,6 @@ bin-release/
 !*.exe
 # Other files and folders
 .settings/
-.ini
 .log
 # Executables
 *.swf
